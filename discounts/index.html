@@ -208,6 +208,28 @@
   margin-left:14px;
 }
 .site-links a:hover{ opacity:1; text-decoration:underline; }
+    .site-footer{
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding: 18px 0 90px; /* 留空间避免被底部悬浮条挡住 */
+  background: transparent;
+}
+.footer-wrap{
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.footer-title{
+  font-weight: 950;
+  font-size: 12px;
+  margin-bottom: 6px;
+  opacity: .85;
+}
+.footer-text{
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+}
   </style>
 </head>
 <body>
@@ -260,6 +282,16 @@
   </div>
   <div id="grid" class="grid"></div>
 </main>
+  <footer class="site-footer">
+  <div class="footer-wrap">
+    <div class="footer-title">Disclosure / 披露</div>
+    <div class="footer-text">
+      MA Licensed Real Estate Professional：<b>[你的姓名]</b>（License # 可选）<br/>
+      Brokerage：<b>[你的Brokerage全名或备案 d/b/a]</b><br/>
+      信息仅供参考；价格与优惠以物业/房源方最终确认为准。
+    </div>
+  </div>
+</footer>
 <!-- Floating bar -->
 <div id="floatbar" class="floatbar" role="dialog" aria-label="Contact bar">
   <div class="floatbar-inner">
