@@ -8,7 +8,8 @@
     "baths": 1,
     "baseRent": 4100,
     "leaseMonths": 12,
-    "concession": { "type": "MONTHS_FREE", "value": 1 }
+    "concession": { "type": "MONTHS_FREE", "value": 1 },
+    "sourceUrl": "#"
 
   },
   {
@@ -20,6 +21,7 @@
     "baths": 1,
     "baseRent": 2850,
     "leaseMonths": 12,
-    "concession": { "type": "AMOUNT_OFF", "value": 1500 }
+    "concession": { "type": "AMOUNT_OFF", "value": 1500 },
+    "sourceUrl": "#"
   }
 ]
