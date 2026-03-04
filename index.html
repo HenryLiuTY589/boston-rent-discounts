@@ -3,67 +3,225 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Boston Rent Discounts</title>
+  <title>Boston Rent Discounts | Effective Rent</title>
   <style>
-    body{font-family:system-ui;margin:0;background:#0b0f17;color:#e8eefc}
-    header{padding:20px;border-bottom:1px solid rgba(255,255,255,.1)}
-    main{max-width:1100px;margin:0 auto;padding:20px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-    .card{background:#0f1729;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px}
-    .price{font-size:22px;font-weight:800}
-    .muted{opacity:.75;font-size:12px}
-    a{color:#9cc2ff;text-decoration:none}
+    :root{
+      --bg:#0b0f17; --panel:#0f1729; --panel2:#121a2a;
+      --text:#e8eefc; --muted:rgba(232,238,252,.72);
+      --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.14);
+      --link:#9cc2ff;
+    }
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:var(--bg);color:var(--text)}
+    header{position:sticky;top:0;z-index:10;background:rgba(11,15,23,.75);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    .wrap{max-width:1120px;margin:0 auto;padding:18px 20px}
+    h1{margin:0;font-size:18px}
+    .sub{margin-top:6px;font-size:13px;color:var(--muted)}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    input,select{
+      background:var(--panel2);color:var(--text);
+      border:1px solid var(--line2);padding:10px 12px;border-radius:12px;outline:none
+    }
+    input{min-width:240px}
+    main{max-width:1120px;margin:0 auto;padding:18px 20px}
+    .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .meta .left{color:var(--muted);font-size:12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}
+    .top{display:flex;justify-content:space-between;gap:10px}
+    .price{font-size:22px;font-weight:850;letter-spacing:.2px}
+    .muted{color:var(--muted);font-size:12px}
+    .badge{display:inline-block;font-size:12px;padding:5px 8px;border-radius:999px;border:1px solid var(--line2);color:var(--text);opacity:.92}
+    .row{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .name{margin-top:10px;font-weight:800}
+    .cta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    a{color:var(--link);text-decoration:none}
     a:hover{text-decoration:underline}
+    .pill{
+      padding:7px 10px;border-radius:12px;background:rgba(156,194,255,.10);border:1px solid rgba(156,194,255,.22)
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h2 style="margin:0">Boston Apartment Discounts</h2>
-    <div class="muted">先做 MVP：从 deals.json 读取数据并计算折后月租。</div>
-  </header>
-  <main>
-    <div id="meta" class="muted"></div>
-    <div id="grid" class="grid"></div>
-  </main>
+<header>
+  <div class="wrap">
+    <h1>Boston Apartment Discounts（按折后月租比较）</h1>
+    <div class="sub">Effective Rent = (标价×租期 − 优惠折算金额) ÷ 租期。优惠以原链接/物业确认为准。</div>
+
+    <div class="controls">
+      <input id="q" placeholder="搜索：楼盘/区域…" />
+      <select id="neighborhood"><option value="">全部区域</option></select>
+      <select id="beds">
+        <option value="">全部户型</option>
+        <option value="0">Studio</option>
+        <option value="1">1B</option>
+        <option value="2">2B</option>
+        <option value="3">3B+</option>
+      </select>
+      <select id="verified">
+        <option value="">全部（含未核验）</option>
+        <option value="1">仅显示 Verified</option>
+      </select>
+      <select id="sort">
+        <option value="effective_asc">折后价：低 → 高</option>
+        <option value="effective_desc">折后价：高 → 低</option>
+        <option value="savings_desc">节省：高 → 低</option>
+        <option value="base_asc">标价：低 → 高</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="meta">
+    <div id="metaLeft" class="left muted"></div>
+    <a class="pill" href="mailto:your@email.com">Submit a deal</a>
+  </div>
+  <div id="grid" class="grid"></div>
+</main>
 
 <script>
   const fmt = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
 
   function concessionValue(d){
-    const c=d.concession, base=d.baseRent;
+    const c = d.concession, base = Number(d.baseRent||0);
     if(!c) return 0;
-    if(c.type==="MONTHS_FREE") return base*Number(c.value||0);
+    if(c.type==="MONTHS_FREE") return base * Number(c.value||0);
     if(c.type==="AMOUNT_OFF") return Number(c.value||0);
-    if(c.type==="MONTHLY_OFF") return Number(c.value||0)*Number(c.months||0);
+    if(c.type==="MONTHLY_OFF") return Number(c.value||0) * Number(c.months||0);
     return 0;
   }
+
   function effectiveRent(d){
-    const cv=concessionValue(d);
-    return (d.baseRent*d.leaseMonths - cv)/d.leaseMonths;
+    const base = Number(d.baseRent||0), m = Number(d.leaseMonths||0);
+    if(!base || !m) return null;
+    return (base*m - concessionValue(d))/m;
+  }
+
+  function dealBadge(d){
+    const c = d.concession;
+    if(!c) return "No deal";
+    if(c.type==="MONTHS_FREE") return `${c.value} month free`;
+    if(c.type==="AMOUNT_OFF") return `${fmt(c.value)} off`;
+    if(c.type==="MONTHLY_OFF") return `${fmt(c.value)}/mo off × ${c.months} mo`;
+    return "Deal";
+  }
+
+  function bedsText(b){
+    if(b===0) return "Studio";
+    if(b>=3) return "3B+";
+    return `${b}B`;
   }
 
   function card(d){
-    const eff = Math.round(effectiveRent(d));
-    const save = Math.round(concessionValue(d)/d.leaseMonths);
+    const eff = effectiveRent(d);
+    const saveMo = d.leaseMonths ? Math.round(concessionValue(d)/d.leaseMonths) : 0;
+    const verified = d.verifiedAt ? `Verified · ${d.verifiedAt}` : `Not verified`;
+    const note = d.notes ? ` · ${d.notes}` : "";
+
     return `
       <div class="card">
-        <div class="price">${fmt(eff)}</div>
-        <div class="muted">Base ${fmt(d.baseRent)} · Save ${fmt(save)}/mo · ${d.leaseMonths} mo</div>
-        <div style="margin-top:10px;font-weight:700">${d.property}</div>
-        <div class="muted">${d.neighborhood || d.city || "Boston"} · ${d.beds===0?"Studio":d.beds+"B"}</div>
-        <div style="margin-top:10px"><a href="${d.sourceUrl}" target="_blank" rel="noopener">Source ↗</a></div>
+        <div class="top">
+          <div>
+            <div class="price">${eff ? fmt(Math.round(eff)) : "—"}</div>
+            <div class="muted">Base ${fmt(d.baseRent)} · Save ${fmt(saveMo)}/mo · ${d.leaseMonths} mo</div>
+          </div>
+          <div style="text-align:right">
+            <span class="badge">${dealBadge(d)}</span>
+            <div class="muted" style="margin-top:8px">${verified}</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="badge">${d.neighborhood || d.city || "Boston"}</span>
+          <span class="badge">${bedsText(d.beds)} · ${(d.baths||1)}BA</span>
+          ${d.moveInBy ? `<span class="badge">Move-in by ${d.moveInBy}</span>` : ``}
+        </div>
+
+        <div class="name">${d.property}</div>
+        <div class="muted">${d.city || "Boston"}${note}</div>
+
+        <div class="cta">
+          <a href="${d.sourceUrl}" target="_blank" rel="noopener">Source ↗</a>
+          <span class="muted">ID: ${d.id || "-"}</span>
+        </div>
       </div>
     `;
   }
 
-  async function init(){
-    const res = await fetch('./deals.json', {cache:"no-store"});
-    const deals = await res.json();
-    deals.sort((a,b)=>effectiveRent(a)-effectiveRent(b));
-    document.getElementById('meta').textContent = `${deals.length} deals`;
+  let allDeals = [];
+
+  function populateNeighborhoods(deals){
+    const sel = document.getElementById('neighborhood');
+    const set = new Set(deals.map(d=>d.neighborhood).filter(Boolean));
+    [...set].sort().forEach(n=>{
+      const o=document.createElement('option');
+      o.value=n; o.textContent=n;
+      sel.appendChild(o);
+    });
+  }
+
+  function apply(){
+    const q = document.getElementById('q').value.trim().toLowerCase();
+    const nb = document.getElementById('neighborhood').value;
+    const beds = document.getElementById('beds').value;
+    const verified = document.getElementById('verified').value;
+    const sort = document.getElementById('sort').value;
+
+    let deals = allDeals.slice();
+
+    if(q){
+      deals = deals.filter(d =>
+        (d.property||"").toLowerCase().includes(q) ||
+        (d.neighborhood||"").toLowerCase().includes(q) ||
+        (d.city||"").toLowerCase().includes(q)
+      );
+    }
+    if(nb) deals = deals.filter(d=>d.neighborhood===nb);
+
+    if(beds!==""){
+      const b = Number(beds);
+      deals = deals.filter(d => b===3 ? (Number(d.beds||0) >= 3) : (Number(d.beds)===b));
+    }
+    if(verified==="1") deals = deals.filter(d=>!!d.verifiedAt);
+
+    deals.forEach(d=>{
+      d._eff = effectiveRent(d);
+      d._save = concessionValue(d);
+    });
+
+    const sorter = {
+      effective_asc: (a,b)=>(a._eff ?? 1e18)-(b._eff ?? 1e18),
+      effective_desc:(a,b)=>(b._eff ?? -1)-(a._eff ?? -1),
+      savings_desc: (a,b)=>(b._save ?? 0)-(a._save ?? 0),
+      base_asc: (a,b)=>(a.baseRent ?? 1e18)-(b.baseRent ?? 1e18)
+    }[sort];
+
+    deals.sort(sorter);
+
+    document.getElementById('metaLeft').textContent =
+      `${deals.length} deals · 数据来自 deals.json（建议每条都附 sourceUrl）`;
+
     document.getElementById('grid').innerHTML = deals.map(card).join("");
   }
-  init().catch(()=>document.getElementById('meta').textContent="Failed to load deals.json");
+
+  async function init(){
+    const res = await fetch('./deals.json', {cache:"no-store"});
+    allDeals = await res.json();
+    populateNeighborhoods(allDeals);
+
+    ["q","neighborhood","beds","verified","sort"].forEach(id=>{
+      document.getElementById(id).addEventListener('input', apply);
+      document.getElementById(id).addEventListener('change', apply);
+    });
+
+    apply();
+  }
+
+  init().catch(e=>{
+    document.getElementById('metaLeft').textContent = "Failed to load deals.json";
+    console.error(e);
+  });
 </script>
 </body>
 </html>
