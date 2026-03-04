@@ -3,602 +3,613 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Boston Rent Discounts | Effective Rent</title>
+  <title>Boston Apartment Deals | Effective Rent</title>
+
+  <!-- Leaflet (Free map via OpenStreetMap tiles) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <style>
     :root{
-  --bg:#ffffff;
-  --panel:#ffffff;
-  --panel2:#f6f7fb;
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --panel2:#f6f7fb;
 
-  --text:#0b1220;
-  --muted:rgba(11,18,32,.64);
+      --text:#0b1220;
+      --muted:rgba(11,18,32,.64);
 
-  --line:rgba(11,18,32,.10);
-  --line2:rgba(11,18,32,.14);
+      --line:rgba(11,18,32,.10);
+      --line2:rgba(11,18,32,.14);
 
-  --link:#1d4ed8;
+      --link:#1d4ed8;
     }
     *{box-sizing:border-box}
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:var(--bg);color:var(--text)}
-    header{position:sticky;top:56px;z-index:10;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+
+    /* Global top nav */
+    .site-nav{
+      position: sticky;
+      top: 0;
+      z-index: 2000;
+      background: rgba(255,255,255,.90);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(11,18,32,.10);
+    }
+    .site-nav-wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .site-brand{ font-weight: 950; letter-spacing: -.2px; }
+    .site-links{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+    .site-links a{
+      color:#0b1220;
+      text-decoration:none;
+      font-weight: 850;
+      opacity:.9;
+    }
+    .site-links a:hover{ opacity:1; text-decoration:underline; }
+
+    /* Deals header (sticky below site-nav) */
+    header{
+      position: sticky;
+      top: 56px;
+      z-index: 10;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
     .wrap{max-width:1120px;margin:0 auto;padding:18px 20px}
     h1{margin:0;font-size:18px}
     .sub{margin-top:6px;font-size:13px;color:var(--muted)}
+
     .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
     input,select{
-      background:var(--panel2);color:var(--text);
-      border:1px solid var(--line2);padding:10px 12px;border-radius:12px;outline:none
+      background:var(--panel2);
+      color:var(--text);
+      border:1px solid var(--line2);
+      padding:10px 12px;
+      border-radius:12px;
+      outline:none
     }
     input{min-width:240px}
+
     main{max-width:1120px;margin:0 auto;padding:18px 20px}
     .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
     .meta .left{color:var(--muted);font-size:12px}
+
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
     .card{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:14px;
-  box-shadow: 0 10px 26px rgba(11,18,32,.08);
-}
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow: 0 10px 26px rgba(11,18,32,.08);
+    }
     .top{display:flex;justify-content:space-between;gap:10px}
     .price{font-size:22px;font-weight:850;letter-spacing:.2px}
     .muted{color:var(--muted);font-size:12px}
-    .badge{display:inline-block;font-size:12px;padding:5px 8px;border-radius:999px;border:1px solid var(--line2);color:var(--text);opacity:.92}
+    .badge{
+      display:inline-block;
+      font-size:12px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid var(--line2);
+      color:var(--text);
+      opacity:.92
+    }
     .row{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
     .name{margin-top:10px;font-weight:800}
     .cta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+
     a{color:var(--link);text-decoration:none}
     a:hover{text-decoration:underline}
+
+    /* Buttons */
     .pill{
-  padding:10px 14px;
-  border-radius:12px;
-  font-weight:800;
-  color:#1b1400;
-  background: linear-gradient(135deg, #F6E27A 0%, #D4AF37 45%, #B8860B 100%);
-  border: 1px solid rgba(184,134,11,.35);
-  box-shadow: 0 10px 24px rgba(180,130,10,.22);
-}
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:800;
+      color:#1b1400;
+      background: linear-gradient(135deg, #F6E27A 0%, #D4AF37 45%, #B8860B 100%);
+      border: 1px solid rgba(184,134,11,.35);
+      box-shadow: 0 10px 24px rgba(180,130,10,.22);
+      cursor:pointer;
+    }
+    .pill:hover{
+      text-decoration:none;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(180,130,10,.28);
+    }
 
-.pill:hover{
-  text-decoration:none;
-  transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(180,130,10,.28);
-}
-    /* Floating WeChat bar */
-.floatbar{
-  position: fixed;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  width: min(980px, calc(100% - 24px));
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 40%, #4f46e5 100%);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 18px;
-  box-shadow: 0 18px 40px rgba(17,24,39,.25);
-  padding: 14px 14px;
-  z-index: 9999;
-}
-.floatbar-inner{
-  display:flex;
-  gap: 14px;
-  align-items:center;
-}
-.floatbar-left{
-  display:flex;
-  gap: 12px;
-  align-items:center;
-  flex: 1;
-  min-width: 0;
-}
-.floatbar-title{
-  font-weight: 900;
-  font-size: 16px;
-  line-height: 1.1;
-  margin: 0;
-}
-.floatbar-sub{
-  margin-top: 4px;
-  font-size: 12px;
-  opacity: .9;
-}
-.floatbar-actions{
-  display:flex;
-  gap: 10px;
-  align-items:center;
-  flex-wrap: wrap;
-}
-.floatbar-btn{
-  display:inline-flex;
-  align-items:center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.12);
-  color: #fff;
-  font-weight: 800;
-  cursor: pointer;
-  user-select:none;
-}
-.floatbar-btn:hover{ background: rgba(255,255,255,.18); }
-.floatbar-close{
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.22);
-  background: rgba(0,0,0,.12);
-  color:#fff;
-  cursor:pointer;
-}
-.floatbar-close:hover{ background: rgba(0,0,0,.18); }
+    .btn2{
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:800;
+      background: var(--panel2);
+      border: 1px solid var(--line2);
+      color: var(--text);
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .btn2:hover{ transform: translateY(-1px); }
 
-.qr-pop{
-  position: fixed;
-  left: 50%;
-  bottom: 92px;
-  transform: translateX(-50%);
-  width: min(380px, calc(100% - 24px));
-  background: #fff;
-  color: #111827;
-  border: 1px solid rgba(17,24,39,.12);
-  border-radius: 16px;
-  box-shadow: 0 18px 40px rgba(17,24,39,.18);
-  padding: 14px;
-  z-index: 9999;
-  display:none;
-}
-.qr-pop.show{ display:block; }
-.qr-pop .qr-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.qr-pop .qr-title{ font-weight: 900; }
-.qr-pop .qr-x{
-  border: 1px solid rgba(17,24,39,.14);
-  background: #f3f4f6;
-  border-radius: 10px;
-  width: 34px;
-  height: 34px;
-  cursor:pointer;
-}
-.qr-pop img{
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
-  border: 1px solid rgba(17,24,39,.10);
-}
-.qr-pop .qr-tip{
-  margin-top: 10px;
-  font-size: 12px;
-  opacity: .8;
-}
+    /* Map container */
+    #map{
+      height: 70vh;
+      min-height: 520px;
+      border:1px solid var(--line);
+      border-radius:18px;
+    }
 
-@media (max-width: 520px){
-  .floatbar-title{ font-size: 14px; }
-  .floatbar-sub{ display:none; }
-}
-    .site-nav{
-  position: sticky;
-  top: 0;
-  z-index: 2000;
-  background: rgba(255,255,255,.90);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(11,18,32,.10);
-}
-.site-nav-wrap{
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 12px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 12px;
-}
-.site-brand{ font-weight: 950; }
-.site-links a{
-  color:#0b1220;
-  text-decoration:none;
-  font-weight: 850;
-  opacity:.9;
-  margin-left:14px;
-}
-.site-links a:hover{ opacity:1; text-decoration:underline; }
+    /* Footer */
     .site-footer{
-  border-top: 1px solid var(--line);
-  margin-top: 24px;
-  padding: 18px 0 90px; /* 留空间避免被底部悬浮条挡住 */
-  background: transparent;
-}
-.footer-wrap{
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-.footer-title{
-  font-weight: 950;
-  font-size: 12px;
-  margin-bottom: 6px;
-  opacity: .85;
-}
-.footer-text{
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.55;
-}
+      border-top: 1px solid var(--line);
+      margin-top: 24px;
+      padding: 18px 0 90px; /* leave space above floating bar */
+      background: transparent;
+    }
+    .footer-wrap{max-width: 1120px;margin: 0 auto;padding: 0 20px;}
+    .footer-title{font-weight: 950;font-size: 12px;margin-bottom: 6px;opacity: .85;}
+    .footer-text{font-size: 12px;color: var(--muted);line-height: 1.55;}
+
+    /* Floating WeChat bar */
+    .floatbar{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      width: min(980px, calc(100% - 24px));
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 40%, #4f46e5 100%);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(17,24,39,.25);
+      padding: 14px 14px;
+      z-index: 9999;
+    }
+    .floatbar-inner{display:flex;gap: 14px;align-items:center;}
+    .floatbar-left{display:flex;gap: 12px;align-items:center;flex: 1;min-width: 0;}
+    .floatbar-title{font-weight: 900;font-size: 16px;line-height: 1.1;margin: 0;}
+    .floatbar-sub{margin-top: 4px;font-size: 12px;opacity: .9;}
+    .floatbar-actions{display:flex;gap: 10px;align-items:center;flex-wrap: wrap;}
+    .floatbar-btn{
+      display:inline-flex;align-items:center;gap: 8px;
+      padding: 10px 12px;border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.12);
+      color: #fff;font-weight: 800;cursor: pointer;user-select:none;
+      text-decoration:none;
+    }
+    .floatbar-btn:hover{ background: rgba(255,255,255,.18); }
+    .floatbar-close{
+      width: 34px;height: 34px;border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.12);
+      color:#fff;cursor:pointer;
+    }
+    .floatbar-close:hover{ background: rgba(0,0,0,.18); }
+
+    .qr-pop{
+      position: fixed;
+      left: 50%;
+      bottom: 92px;
+      transform: translateX(-50%);
+      width: min(380px, calc(100% - 24px));
+      background: #fff;
+      color: #111827;
+      border: 1px solid rgba(17,24,39,.12);
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(17,24,39,.18);
+      padding: 14px;
+      z-index: 9999;
+      display:none;
+    }
+    .qr-pop.show{ display:block; }
+    .qr-pop .qr-head{display:flex;justify-content:space-between;align-items:center;gap: 10px;margin-bottom: 10px;}
+    .qr-pop .qr-title{ font-weight: 900; }
+    .qr-pop .qr-x{
+      border: 1px solid rgba(17,24,39,.14);
+      background: #f3f4f6;
+      border-radius: 10px;
+      width: 34px;height: 34px;cursor:pointer;
+    }
+    .qr-pop img{
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(17,24,39,.10);
+    }
+    .qr-pop .qr-tip{margin-top: 10px;font-size: 12px;opacity: .8;}
+
+    @media (max-width: 520px){
+      .floatbar-title{ font-size: 14px; }
+      .floatbar-sub{ display:none; }
+      header{ top: 52px; }
+    }
   </style>
 </head>
+
 <body>
+  <!-- Global nav -->
   <div class="site-nav">
-  <div class="site-nav-wrap">
-    <div class="site-brand">Boston Rent Discounts</div>
-    <nav class="site-links">
-      <a href="/boston-rent-discounts/">Home</a>
-      <a href="/boston-rent-discounts/discounts/">Deals</a>
-      <a href="/boston-rent-discounts/contact/">Contact</a>
-    </nav>
-    <div style="font-size:12px;opacity:.75;">
-  MA Licensed Real Estate Professional · Brokerage: <b>[你的Brokerage全名或备案d/b/a]</b>
-</div>
-  </div>
-</div>
-<header>
-  <div class="wrap">
-    <h1>Boston Apartment Discounts（按折后月租比较）</h1>
-    <div class="sub">Effective Rent = (标价×租期 − 优惠折算金额) ÷ 租期。优惠以原链接/物业确认为准。</div>
-
-    <div class="controls">
-      <input id="q" placeholder="搜索：楼盘/区域…" />
-      <select id="neighborhood"><option value="">全部区域</option></select>
-      <select id="beds">
-        <option value="">全部户型</option>
-        <option value="0">Studio</option>
-        <option value="1">1B</option>
-        <option value="2">2B</option>
-        <option value="3">3B+</option>
-      </select>
-      <select id="verified">
-        <option value="">全部（含未核验）</option>
-        <option value="1">仅显示 Verified</option>
-      </select>
-      <select id="sort">
-        <option value="effective_asc">折后价：低 → 高</option>
-        <option value="effective_desc">折后价：高 → 低</option>
-        <option value="savings_desc">节省：高 → 低</option>
-        <option value="base_asc">标价：低 → 高</option>
-      </select>
+    <div class="site-nav-wrap">
+      <div class="site-brand">Boston Rent Discounts</div>
+      <div class="site-links">
+        <a href="/boston-rent-discounts/">Home</a>
+        <a href="/boston-rent-discounts/discounts/">Deals</a>
+        <a href="/boston-rent-discounts/contact/">Contact</a>
+      </div>
+      <div style="font-size:12px;opacity:.75;white-space:nowrap;">
+        MA Licensed Real Estate <b>Salesperson</b> · Brokerage: <b>[你的Brokerage全名或备案 d/b/a]</b>
+      </div>
     </div>
   </div>
-</header>
 
-<main>
-<div class="meta">
-  <div id="metaLeft" class="left muted"></div>
+  <!-- Deals header -->
+  <header>
+    <div class="wrap">
+      <h1>Boston Apartment Discounts（按折后月租比较）</h1>
+      <div class="sub">Effective Rent = (标价×租期 − 优惠折算金额) ÷ 租期。信息仅供参考，优惠以物业/房源方最终确认为准。</div>
 
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-    <button id="btnGrid" class="pill" type="button">Grid</button>
-    <button id="btnMap" class="btn2" type="button">Map</button>
-    <a class="btn2" href="/boston-rent-discounts/contact/">Contact</a>
-  </div>
-</div>
+      <div class="controls">
+        <input id="q" placeholder="搜索：楼盘/区域…" />
+        <select id="neighborhood"><option value="">全部区域</option></select>
+        <select id="beds">
+          <option value="">全部户型</option>
+          <option value="0">Studio</option>
+          <option value="1">1B</option>
+          <option value="2">2B</option>
+          <option value="3">3B+</option>
+        </select>
+        <select id="verified">
+          <option value="">全部（含未核验）</option>
+          <option value="1">仅显示 Verified</option>
+        </select>
+        <select id="sort">
+          <option value="effective_asc">折后价：低 → 高</option>
+          <option value="effective_desc">折后价：高 → 低</option>
+          <option value="savings_desc">节省：高 → 低</option>
+          <option value="base_asc">标价：低 → 高</option>
+        </select>
+      </div>
+    </div>
+  </header>
 
-<div id="grid" class="grid"></div>
-<div id="mapWrap" style="display:none; margin-top:12px;">
-  <div id="map" style="height: 70vh; min-height: 520px; border:1px solid var(--line); border-radius:18px;"></div>
-</div>
-</main>
+  <main>
+    <div class="meta">
+      <div id="metaLeft" class="left muted"></div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button id="btnGrid" class="pill" type="button">Grid</button>
+        <button id="btnMap" class="btn2" type="button">Map</button>
+        <a class="btn2" href="/boston-rent-discounts/contact/">Contact</a>
+      </div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+
+    <div id="mapWrap" style="display:none; margin-top:12px;">
+      <div id="map"></div>
+    </div>
+  </main>
+
   <footer class="site-footer">
-  <div class="footer-wrap">
-    <div class="footer-title">Disclosure / 披露</div>
-    <div class="footer-text">
-      MA Licensed Real Estate Professional：<b>[你的姓名]</b>（License # 可选）<br/>
-      Brokerage：<b>[你的Brokerage全名或备案 d/b/a]</b><br/>
-      信息仅供参考；价格与优惠以物业/房源方最终确认为准。
-    </div>
-  </div>
-</footer>
-<!-- Floating bar -->
-<div id="floatbar" class="floatbar" role="dialog" aria-label="Contact bar">
-  <div class="floatbar-inner">
-    <div class="floatbar-left">
-      <div>
-        <div class="floatbar-title">找房优惠咨询｜加我微信</div>
-        <div class="floatbar-sub">我可以帮你核对优惠、计算折后价、确认入住/租期限制</div>
+    <div class="footer-wrap">
+      <div class="footer-title">Disclosure / 披露</div>
+      <div class="footer-text">
+        MA Licensed Real Estate <b>Salesperson</b>：<b>[你的姓名]</b>（MA License # 可选）<br/>
+        Brokerage：<b>[你的Brokerage全名或备案 d/b/a]</b><br/>
+        信息仅供参考；价格与优惠以物业/房源方最终确认为准。
       </div>
     </div>
+  </footer>
 
-    <div class="floatbar-actions">
-      <button class="floatbar-btn" id="btnWeChat" type="button">WeChat 二维码</button>
-      <a class="floatbar-btn" href="mailto:your@email.com">Email</a>
-      <button class="floatbar-close" id="btnCloseBar" type="button" aria-label="Close">✕</button>
-    </div>
-  </div>
-</div>
-
-<!-- QR popup -->
-<div id="qrPop" class="qr-pop" role="dialog" aria-label="WeChat QR">
-  <div class="qr-head">
-    <div class="qr-title">扫码加微信</div>
-    <button class="qr-x" id="btnCloseQr" type="button" aria-label="Close">✕</button>
-  </div>
-  <img src="/boston-rent-discounts/wechat-qr.png" alt="WeChat QR Code">
-  <div class="qr-tip">打开微信 → 扫一扫 → 添加好友</div>
-</div>
-<script>
-  const fmt = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
-
-  function concessionValue(d){
-    const c = d.concession, base = Number(d.baseRent||0);
-    if(!c) return 0;
-    if(c.type==="MONTHS_FREE") return base * Number(c.value||0);
-    if(c.type==="AMOUNT_OFF") return Number(c.value||0);
-    if(c.type==="MONTHLY_OFF") return Number(c.value||0) * Number(c.months||0);
-    return 0;
-  }
-
-  function effectiveRent(d){
-    const base = Number(d.baseRent||0), m = Number(d.leaseMonths||0);
-    if(!base || !m) return null;
-    return (base*m - concessionValue(d))/m;
-  }
-
-  function dealBadge(d){
-    const c = d.concession;
-    if(!c) return "No deal";
-    if(c.type==="MONTHS_FREE") return `${c.value} month free`;
-    if(c.type==="AMOUNT_OFF") return `${fmt(c.value)} off`;
-    if(c.type==="MONTHLY_OFF") return `${fmt(c.value)}/mo off × ${c.months} mo`;
-    return "Deal";
-  }
-
-  function bedsText(b){
-    if(b===0) return "Studio";
-    if(b>=3) return "3B+";
-    return `${b}B`;
-  }
-
-  function card(d){
-    const eff = effectiveRent(d);
-    const saveMo = d.leaseMonths ? Math.round(concessionValue(d)/d.leaseMonths) : 0;
-    const verified = d.verifiedAt ? `Verified · ${d.verifiedAt}` : `Not verified`;
-    const note = d.notes ? ` · ${d.notes}` : "";
-
-    return `
-      <div class="card">
-        <div class="top">
-          <div>
-            <div class="price">${eff ? fmt(Math.round(eff)) : "—"}</div>
-            <div class="muted">Base ${fmt(d.baseRent)} · Save ${fmt(saveMo)}/mo · ${d.leaseMonths} mo</div>
-          </div>
-          <div style="text-align:right">
-            <span class="badge">${dealBadge(d)}</span>
-            <div class="muted" style="margin-top:8px">${verified}</div>
-          </div>
-        </div>
-
-        <div class="row">
-          <span class="badge">${d.neighborhood || d.city || "Boston"}</span>
-          <span class="badge">${bedsText(d.beds)} · ${(d.baths||1)}BA</span>
-          ${d.moveInBy ? `<span class="badge">Move-in by ${d.moveInBy}</span>` : ``}
-        </div>
-
-        <div class="name">${d.property}</div>
-        <div class="muted">${d.city || "Boston"}${note}</div>
-
-        <div class="cta">
-          <a href="${d.sourceUrl}" target="_blank" rel="noopener">Source ↗</a>
-          <span class="muted">ID: ${d.id || "-"}</span>
+  <!-- Floating bar -->
+  <div id="floatbar" class="floatbar" role="dialog" aria-label="Contact bar">
+    <div class="floatbar-inner">
+      <div class="floatbar-left">
+        <div>
+          <div class="floatbar-title">找房优惠咨询｜加我微信</div>
+          <div class="floatbar-sub">我可以帮你核对优惠、计算折后价、确认入住/租期限制</div>
         </div>
       </div>
-    `;
-  }
 
-  let allDeals = [];
-const NEIGHBORHOODS = [
-  "Cambridge",
-  "Somerville",
-  "Brookline",
-  "Newton",
-  "Quincy",
-  "Medford",
-  "Malden",
-  "Everett",
-  "Chelsea",
-  "Revere",
-  "Watertown",
-  "Waltham"
-];
-function populateNeighborhoods() {
-  const sel = document.getElementById('neighborhood');
-  sel.innerHTML = '<option value="">全部区域</option>';
+      <div class="floatbar-actions">
+        <button class="floatbar-btn" id="btnWeChat" type="button">WeChat 二维码</button>
+        <a class="floatbar-btn" href="mailto:your@email.com">Email</a>
+        <button class="floatbar-close" id="btnCloseBar" type="button" aria-label="Close">✕</button>
+      </div>
+    </div>
+  </div>
 
-  NEIGHBORHOODS.forEach(n => {
-    const o = document.createElement('option');
-    o.value = n;
-    o.textContent = n;
-    sel.appendChild(o);
-  });
-}
+  <!-- QR popup -->
+  <div id="qrPop" class="qr-pop" role="dialog" aria-label="WeChat QR">
+    <div class="qr-head">
+      <div class="qr-title">扫码加微信</div>
+      <button class="qr-x" id="btnCloseQr" type="button" aria-label="Close">✕</button>
+    </div>
+    <img src="/boston-rent-discounts/wechat-qr.png" alt="WeChat QR Code">
+    <div class="qr-tip">打开微信 → 扫一扫 → 添加好友</div>
+  </div>
 
-  function apply(){
-    const q = document.getElementById('q').value.trim().toLowerCase();
-    const nb = document.getElementById('neighborhood').value;
-    const beds = document.getElementById('beds').value;
-    const verified = document.getElementById('verified').value;
-    const sort = document.getElementById('sort').value;
+  <script>
+    const fmt = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
 
-    let deals = allDeals.slice();
-
-    if(q){
-      deals = deals.filter(d =>
-        (d.property||"").toLowerCase().includes(q) ||
-        (d.neighborhood||"").toLowerCase().includes(q) ||
-        (d.city||"").toLowerCase().includes(q)
-      );
+    function concessionValue(d){
+      const c = d.concession, base = Number(d.baseRent||0);
+      if(!c) return 0;
+      if(c.type==="MONTHS_FREE") return base * Number(c.value||0);
+      if(c.type==="AMOUNT_OFF") return Number(c.value||0);
+      if(c.type==="MONTHLY_OFF") return Number(c.value||0) * Number(c.months||0);
+      return 0;
     }
-    if(nb) deals = deals.filter(d=>d.neighborhood===nb);
 
-    if(beds!==""){
-      const b = Number(beds);
-      deals = deals.filter(d => b===3 ? (Number(d.beds||0) >= 3) : (Number(d.beds)===b));
+    function effectiveRent(d){
+      const base = Number(d.baseRent||0), m = Number(d.leaseMonths||0);
+      if(!base || !m) return null;
+      return (base*m - concessionValue(d))/m;
     }
-    if(verified==="1") deals = deals.filter(d=>!!d.verifiedAt);
 
-    deals.forEach(d=>{
-      d._eff = effectiveRent(d);
-      d._save = concessionValue(d);
+    function dealBadge(d){
+      const c = d.concession;
+      if(!c) return "No deal";
+      if(c.type==="MONTHS_FREE") return `${c.value} month free`;
+      if(c.type==="AMOUNT_OFF") return `${fmt(c.value)} off`;
+      if(c.type==="MONTHLY_OFF") return `${fmt(c.value)}/mo off × ${c.months} mo`;
+      return "Deal";
+    }
+
+    function bedsText(b){
+      if(b===0) return "Studio";
+      if(b>=3) return "3B+";
+      return `${b}B`;
+    }
+
+    function card(d){
+      const eff = effectiveRent(d);
+      const saveMo = d.leaseMonths ? Math.round(concessionValue(d)/d.leaseMonths) : 0;
+      const verified = d.verifiedAt ? `Verified · ${d.verifiedAt}` : `Not verified`;
+      const note = d.notes ? ` · ${d.notes}` : "";
+
+      return `
+        <div class="card">
+          <div class="top">
+            <div>
+              <div class="price">${eff ? fmt(Math.round(eff)) : "—"}</div>
+              <div class="muted">Base ${fmt(d.baseRent)} · Save ${fmt(saveMo)}/mo · ${d.leaseMonths} mo</div>
+            </div>
+            <div style="text-align:right">
+              <span class="badge">${dealBadge(d)}</span>
+              <div class="muted" style="margin-top:8px">${verified}</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <span class="badge">${d.neighborhood || d.city || "Boston"}</span>
+            <span class="badge">${bedsText(d.beds)} · ${(d.baths||1)}BA</span>
+            ${d.moveInBy ? `<span class="badge">Move-in by ${d.moveInBy}</span>` : ``}
+          </div>
+
+          <div class="name">${d.property}</div>
+          <div class="muted">${d.city || "Boston"}${note}</div>
+
+          <div class="cta">
+            <span class="muted">ID: ${d.id || "-"}</span>
+            ${d.sourceUrl ? `<a href="${d.sourceUrl}" target="_blank" rel="noopener">Source ↗</a>` : ``}
+          </div>
+        </div>
+      `;
+    }
+
+    // Fixed neighborhood list (edit as you like)
+    const NEIGHBORHOODS = [
+      "Cambridge","Somerville","Brookline","Newton","Quincy","Medford",
+      "Malden","Everett","Chelsea","Revere","Watertown","Waltham",
+      "Allston","Seaport" // optional: keep your demo visible
+    ];
+
+    function populateNeighborhoods(){
+      const sel = document.getElementById('neighborhood');
+      sel.innerHTML = '<option value="">全部区域</option>';
+      NEIGHBORHOODS.forEach(n => {
+        const o = document.createElement('option');
+        o.value = n;
+        o.textContent = n;
+        sel.appendChild(o);
+      });
+    }
+
+    let allDeals = [];
+
+    // ---------- MAP ----------
+    let map, markersLayer;
+
+    function ensureMap(){
+      if (map) return;
+
+      map = L.map('map', { scrollWheelZoom: true }).setView([42.3601, -71.0589], 11);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      markersLayer = L.layerGroup().addTo(map);
+    }
+
+    function renderMap(deals){
+      ensureMap();
+      markersLayer.clearLayers();
+
+      const points = [];
+
+      deals.forEach(d => {
+        if (typeof d.lat !== "number" || typeof d.lng !== "number") return;
+
+        const eff = effectiveRent(d);
+        const label = eff ? `$${Math.round(eff).toLocaleString()}` : "—";
+
+        const m = L.marker([d.lat, d.lng]).addTo(markersLayer);
+        m.bindPopup(`
+          <div style="min-width:220px">
+            <div style="font-weight:900;font-size:14px">${d.property}</div>
+            <div style="opacity:.75;font-size:12px;margin-top:4px">${d.neighborhood || ""} · ${bedsText(d.beds)}</div>
+            <div style="margin-top:8px;font-weight:900">Effective: ${label}</div>
+            <div style="opacity:.75;font-size:12px">Base: ${fmt(d.baseRent)} · ${d.leaseMonths} mo</div>
+          </div>
+        `);
+
+        points.push([d.lat, d.lng]);
+      });
+
+      if (points.length) {
+        const bounds = L.latLngBounds(points);
+        map.fitBounds(bounds.pad(0.15));
+      }
+    }
+
+    // ---------- FILTER + RENDER ----------
+    function apply(){
+      const q = document.getElementById('q').value.trim().toLowerCase();
+      const nb = document.getElementById('neighborhood').value;
+      const beds = document.getElementById('beds').value;
+      const verified = document.getElementById('verified').value;
+      const sort = document.getElementById('sort').value;
+
+      let deals = allDeals.slice();
+
+      if(q){
+        deals = deals.filter(d =>
+          (d.property||"").toLowerCase().includes(q) ||
+          (d.neighborhood||"").toLowerCase().includes(q) ||
+          (d.city||"").toLowerCase().includes(q)
+        );
+      }
+      if(nb) deals = deals.filter(d => d.neighborhood === nb);
+
+      if(beds !== ""){
+        const b = Number(beds);
+        deals = deals.filter(d => b === 3 ? (Number(d.beds||0) >= 3) : (Number(d.beds) === b));
+      }
+      if(verified === "1") deals = deals.filter(d => !!d.verifiedAt);
+
+      deals.forEach(d => {
+        d._eff = effectiveRent(d);
+        d._save = concessionValue(d);
+      });
+
+      const sorter = {
+        effective_asc: (a,b)=>(a._eff ?? 1e18)-(b._eff ?? 1e18),
+        effective_desc:(a,b)=>(b._eff ?? -1)-(a._eff ?? -1),
+        savings_desc: (a,b)=>(b._save ?? 0)-(a._save ?? 0),
+        base_asc: (a,b)=>(a.baseRent ?? 1e18)-(b.baseRent ?? 1e18)
+      }[sort];
+
+      deals.sort(sorter);
+
+      document.getElementById('metaLeft').textContent =
+        `${deals.length} deals · 数据来自 deals.json`;
+
+      // grid
+      document.getElementById('grid').innerHTML = deals.map(card).join("");
+
+      // map (only if visible)
+      if (document.getElementById('mapWrap').style.display !== "none") {
+        renderMap(deals);
+      }
+    }
+
+    async function init(){
+      // Stable absolute path
+      const res = await fetch('/boston-rent-discounts/deals.json', { cache: "no-store" });
+      allDeals = await res.json();
+
+      populateNeighborhoods();
+
+      // Toggle buttons
+      const btnGrid = document.getElementById('btnGrid');
+      const btnMap = document.getElementById('btnMap');
+      const mapWrap = document.getElementById('mapWrap');
+      const gridEl = document.getElementById('grid');
+
+      btnGrid.addEventListener('click', () => {
+        gridEl.style.display = "";
+        mapWrap.style.display = "none";
+        btnGrid.className = "pill";
+        btnMap.className = "btn2";
+      });
+
+      btnMap.addEventListener('click', () => {
+        gridEl.style.display = "none";
+        mapWrap.style.display = "";
+        btnGrid.className = "btn2";
+        btnMap.className = "pill";
+
+        setTimeout(() => {
+          ensureMap();
+          if (map) map.invalidateSize();
+          renderMap(allDeals);
+        }, 50);
+      });
+
+      // Filter listeners
+      ["q","neighborhood","beds","verified","sort"].forEach(id=>{
+        document.getElementById(id).addEventListener('input', apply);
+        document.getElementById(id).addEventListener('change', apply);
+      });
+
+      apply();
+    }
+
+    init().catch(e=>{
+      document.getElementById('metaLeft').textContent = "Failed to load deals.json";
+      console.error(e);
     });
 
-    const sorter = {
-      effective_asc: (a,b)=>(a._eff ?? 1e18)-(b._eff ?? 1e18),
-      effective_desc:(a,b)=>(b._eff ?? -1)-(a._eff ?? -1),
-      savings_desc: (a,b)=>(b._save ?? 0)-(a._save ?? 0),
-      base_asc: (a,b)=>(a.baseRent ?? 1e18)-(b.baseRent ?? 1e18)
-    }[sort];
+    // Floating bar logic
+    (function(){
+      const bar = document.getElementById('floatbar');
+      const qr = document.getElementById('qrPop');
+      const btnWeChat = document.getElementById('btnWeChat');
+      const btnCloseBar = document.getElementById('btnCloseBar');
+      const btnCloseQr = document.getElementById('btnCloseQr');
 
-    deals.sort(sorter);
+      const KEY = "floatbar_closed_until";
+      const now = Date.now();
+      const until = Number(localStorage.getItem(KEY) || 0);
+      if (until && now < until) {
+        bar && (bar.style.display = "none");
+      }
 
-    document.getElementById('metaLeft').textContent =
-      `${deals.length} deals · 数据来自 deals.json（建议每条都附 sourceUrl）`;
+      btnWeChat?.addEventListener('click', () => {
+        qr?.classList.toggle('show');
+      });
 
-    document.getElementById('grid').innerHTML = deals.map(card).join("");
-    if (document.getElementById('mapWrap').style.display !== "none") {
-  renderMap(deals);
-}
-  }
+      btnCloseQr?.addEventListener('click', () => {
+        qr?.classList.remove('show');
+      });
 
-  async function init(){
-    const res = await fetch('../deals.json', {cache:"no-store"});
-    allDeals = await res.json();
-    populateNeighborhoods();
-    const btnGrid = document.getElementById('btnGrid');
-const btnMap = document.getElementById('btnMap');
-const mapWrap = document.getElementById('mapWrap');
-const gridEl = document.getElementById('grid');
+      btnCloseBar?.addEventListener('click', () => {
+        if(bar) bar.style.display = "none";
+        qr?.classList.remove('show');
+        localStorage.setItem(KEY, String(Date.now() + 7*24*60*60*1000));
+      });
 
-btnGrid.addEventListener('click', () => {
-  gridEl.style.display = "";
-  mapWrap.style.display = "none";
-  btnGrid.className = "pill";
-  btnMap.className = "btn2";
-});
-
-btnMap.addEventListener('click', () => {
-  gridEl.style.display = "none";
-  mapWrap.style.display = "";
-  btnGrid.className = "btn2";
-  btnMap.className = "pill";
-
-  // 让 Leaflet 在容器显示后正确计算尺寸
-  setTimeout(() => {
-    ensureMap();
-    map.invalidateSize();
-    renderMap(allDeals);
-  }, 50);
-});
-
-    ["q","neighborhood","beds","verified","sort"].forEach(id=>{
-      document.getElementById(id).addEventListener('input', apply);
-      document.getElementById(id).addEventListener('change', apply);
-    });
-
-    apply();
-  }
-let map, markersLayer;
-
-function ensureMap() {
-  if (map) return;
-
-  // 默认视角：大波士顿（你也可以调）
-  map = L.map('map', { scrollWheelZoom: true }).setView([42.3601, -71.0589], 11);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap'
-  }).addTo(map);
-
-  markersLayer = L.layerGroup().addTo(map);
-}
-
-function renderMap(deals) {
-  ensureMap();
-  markersLayer.clearLayers();
-
-  const points = [];
-
-  deals.forEach(d => {
-    if (typeof d.lat !== "number" || typeof d.lng !== "number") return;
-
-    const eff = effectiveRent(d);
-    const label = eff ? `$${Math.round(eff).toLocaleString()}` : "—";
-
-    const m = L.marker([d.lat, d.lng]).addTo(markersLayer);
-    m.bindPopup(`
-      <div style="min-width:220px">
-        <div style="font-weight:900;font-size:14px">${d.property}</div>
-        <div style="opacity:.75;font-size:12px;margin-top:4px">${d.neighborhood || ""} · ${bedsText(d.beds)}</div>
-        <div style="margin-top:8px;font-weight:900">Effective: ${label}</div>
-        <div style="opacity:.75;font-size:12px">Base: ${fmt(d.baseRent)} · ${d.leaseMonths} mo</div>
-      </div>
-    `);
-
-    points.push([d.lat, d.lng]);
-  });
-
-  if (points.length) {
-    const bounds = L.latLngBounds(points);
-    map.fitBounds(bounds.pad(0.15));
-  }
-}
-  init().catch(e=>{
-    document.getElementById('metaLeft').textContent = "Failed to load deals.json";
-    console.error(e);
-  });
-  // Floating bar logic
-(function(){
-  const bar = document.getElementById('floatbar');
-  const qr = document.getElementById('qrPop');
-  const btnWeChat = document.getElementById('btnWeChat');
-  const btnCloseBar = document.getElementById('btnCloseBar');
-  const btnCloseQr = document.getElementById('btnCloseQr');
-
-  // If user closed before, keep hidden for 7 days
-  const KEY = "floatbar_closed_until";
-  const now = Date.now();
-  const until = Number(localStorage.getItem(KEY) || 0);
-  if (until && now < until) {
-    bar && (bar.style.display = "none");
-  }
-
-  btnWeChat?.addEventListener('click', () => {
-    qr?.classList.toggle('show');
-  });
-
-  btnCloseQr?.addEventListener('click', () => {
-    qr?.classList.remove('show');
-  });
-
-  btnCloseBar?.addEventListener('click', () => {
-    // hide bar + qr, remember for 7 days
-    if(bar) bar.style.display = "none";
-    qr?.classList.remove('show');
-    localStorage.setItem(KEY, String(Date.now() + 7*24*60*60*1000));
-  });
-
-  // click outside QR to close
-  document.addEventListener('click', (e) => {
-    if (!qr?.classList.contains('show')) return;
-    const t = e.target;
-    if (qr.contains(t) || btnWeChat.contains(t)) return;
-    qr.classList.remove('show');
-  });
-})();
-</script>
+      document.addEventListener('click', (e) => {
+        if (!qr?.classList.contains('show')) return;
+        const t = e.target;
+        if (qr.contains(t) || btnWeChat.contains(t)) return;
+        qr.classList.remove('show');
+      });
+    })();
+  </script>
 </body>
 </html>
