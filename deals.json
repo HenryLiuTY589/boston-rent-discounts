@@ -8,8 +8,8 @@
     "baths": 1,
     "baseRent": 4100,
     "leaseMonths": 12,
-    "concession": { "type": "MONTHS_FREE", "value": 1 },
-    "sourceUrl": "https://www.livins.ai/discounts"
+    "concession": { "type": "MONTHS_FREE", "value": 1 }
+
   },
   {
     "id": "demo-2",
@@ -20,7 +20,6 @@
     "baths": 1,
     "baseRent": 2850,
     "leaseMonths": 12,
-    "concession": { "type": "AMOUNT_OFF", "value": 1500 },
-    "sourceUrl": "https://www.livins.ai/discounts"
+    "concession": { "type": "AMOUNT_OFF", "value": 1500 }
   }
 ]
