@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Boston Apartment Deals | Effective Rent</title>
+  <title>Special Deals | Effective Rent</title>
 
   <!-- Leaflet (Free map via OpenStreetMap tiles) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -11,29 +11,42 @@
 
   <style>
     :root{
-      --bg:#ffffff;
+      /* Your palette */
+      --ink:#364649;        /* dark teal-gray */
+      --brand:#708F96;      /* muted teal */
+      --accent:#AA895F;     /* brass */
+      --cream:#E0D8CC;      /* warm light */
+
+      /* System tokens */
+      --bg:var(--cream);
       --panel:#ffffff;
-      --panel2:#f6f7fb;
+      --panel2:#F7F3EE;
 
-      --text:#0b1220;
-      --muted:rgba(11,18,32,.64);
+      --text:var(--ink);
+      --muted:rgba(54,70,73,.65);
 
-      --line:rgba(11,18,32,.10);
-      --line2:rgba(11,18,32,.14);
+      --line:rgba(54,70,73,.14);
+      --line2:rgba(54,70,73,.22);
 
-      --link:#1d4ed8;
+      --link:var(--ink);
     }
+
     *{box-sizing:border-box}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:var(--bg);color:var(--text)}
+    body{
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+    }
 
     /* Global top nav */
     .site-nav{
       position: sticky;
       top: 0;
       z-index: 2000;
-      background: rgba(255,255,255,.90);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(11,18,32,.10);
+      background: rgba(224,216,204,.78); /* cream glass */
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
     }
     .site-nav-wrap{
       max-width: 1120px;
@@ -44,42 +57,78 @@
       justify-content:space-between;
       gap: 12px;
     }
-    .site-brand{ font-weight: 950; letter-spacing: -.2px; }
-    .site-links{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+    .site-brand{
+      font-weight: 950;
+      letter-spacing: -.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      white-space:nowrap;
+    }
+    .brand-dot{
+      width:10px;height:10px;border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 6px 14px rgba(170,137,95,.35);
+      display:inline-block;
+    }
+    .site-links{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
     .site-links a{
-      color:#0b1220;
+      color:var(--text);
       text-decoration:none;
       font-weight: 850;
       opacity:.9;
+      padding:6px 8px;
+      border-radius:10px;
     }
-    .site-links a:hover{ opacity:1; text-decoration:underline; }
+    .site-links a:hover{
+      opacity:1;
+      background: rgba(255,255,255,.45);
+      text-decoration:none;
+    }
+    .brokerline{
+      font-size:12px;
+      opacity:.8;
+      white-space:nowrap;
+    }
 
     /* Deals header (sticky below site-nav) */
     header{
       position: sticky;
       top: 56px;
       z-index: 10;
-      background: rgba(255,255,255,.85);
+      background: rgba(247,243,238,.86);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
     }
     .wrap{max-width:1120px;margin:0 auto;padding:18px 20px}
     h1{margin:0;font-size:18px}
     .sub{margin-top:6px;font-size:13px;color:var(--muted)}
-
     .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
     input,select{
-      background:var(--panel2);
+      background:var(--panel);
       color:var(--text);
       border:1px solid var(--line2);
       padding:10px 12px;
       border-radius:12px;
-      outline:none
+      outline:none;
+      box-shadow: 0 8px 18px rgba(54,70,73,.06);
     }
     input{min-width:240px}
 
     main{max-width:1120px;margin:0 auto;padding:18px 20px}
-    .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px
+    }
     .meta .left{color:var(--muted);font-size:12px}
 
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
@@ -88,22 +137,22 @@
       border:1px solid var(--line);
       border-radius:18px;
       padding:14px;
-      box-shadow: 0 10px 26px rgba(11,18,32,.08);
+      box-shadow: 0 12px 30px rgba(54,70,73,.10);
     }
     .top{display:flex;justify-content:space-between;gap:10px}
-    .price{font-size:22px;font-weight:850;letter-spacing:.2px}
+    .price{font-size:22px;font-weight:900;letter-spacing:.2px}
     .muted{color:var(--muted);font-size:12px}
     .badge{
       display:inline-block;
       font-size:12px;
       padding:5px 8px;
       border-radius:999px;
-      border:1px solid var(--line2);
-      color:var(--text);
-      opacity:.92
+      border:1px solid rgba(170,137,95,.55);
+      color: var(--text);
+      background: rgba(224,216,204,.45);
     }
     .row{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .name{margin-top:10px;font-weight:800}
+    .name{margin-top:10px;font-weight:900}
     .cta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
 
     a{color:var(--link);text-decoration:none}
@@ -113,24 +162,23 @@
     .pill{
       padding:10px 14px;
       border-radius:12px;
-      font-weight:800;
-      color:#1b1400;
-      background: linear-gradient(135deg, #F6E27A 0%, #D4AF37 45%, #B8860B 100%);
-      border: 1px solid rgba(184,134,11,.35);
-      box-shadow: 0 10px 24px rgba(180,130,10,.22);
+      font-weight:900;
+      color:#fff;
+      background: var(--brand);
+      border: 1px solid rgba(54,70,73,.18);
+      box-shadow: 0 12px 26px rgba(54,70,73,.16);
       cursor:pointer;
     }
     .pill:hover{
-      text-decoration:none;
       transform: translateY(-1px);
-      box-shadow: 0 14px 30px rgba(180,130,10,.28);
+      background: #5F7E85;
     }
 
     .btn2{
       padding:10px 14px;
       border-radius:12px;
-      font-weight:800;
-      background: var(--panel2);
+      font-weight:900;
+      background: rgba(255,255,255,.65);
       border: 1px solid var(--line2);
       color: var(--text);
       cursor:pointer;
@@ -138,6 +186,7 @@
       display:inline-flex;
       align-items:center;
       justify-content:center;
+      box-shadow: 0 10px 22px rgba(54,70,73,.08);
     }
     .btn2:hover{ transform: translateY(-1px); }
 
@@ -147,6 +196,8 @@
       min-height: 520px;
       border:1px solid var(--line);
       border-radius:18px;
+      box-shadow: 0 12px 30px rgba(54,70,73,.10);
+      overflow:hidden;
     }
 
     /* Footer */
@@ -167,28 +218,30 @@
       bottom: 18px;
       transform: translateX(-50%);
       width: min(980px, calc(100% - 24px));
-      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 40%, #4f46e5 100%);
+      background: rgba(54,70,73,.92);
       color: #fff;
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 18px;
-      box-shadow: 0 18px 40px rgba(17,24,39,.25);
+      box-shadow: 0 18px 40px rgba(17,24,39,.22);
       padding: 14px 14px;
       z-index: 9999;
     }
     .floatbar-inner{display:flex;gap: 14px;align-items:center;}
     .floatbar-left{display:flex;gap: 12px;align-items:center;flex: 1;min-width: 0;}
     .floatbar-title{font-weight: 900;font-size: 16px;line-height: 1.1;margin: 0;}
-    .floatbar-sub{margin-top: 4px;font-size: 12px;opacity: .9;}
+    .floatbar-sub{margin-top: 4px;font-size: 12px;opacity: .92;}
     .floatbar-actions{display:flex;gap: 10px;align-items:center;flex-wrap: wrap;}
+
     .floatbar-btn{
       display:inline-flex;align-items:center;gap: 8px;
       padding: 10px 12px;border-radius: 12px;
       border: 1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.12);
-      color: #fff;font-weight: 800;cursor: pointer;user-select:none;
+      background: rgba(255,255,255,.10);
+      color: #fff;font-weight: 900;cursor: pointer;user-select:none;
       text-decoration:none;
     }
-    .floatbar-btn:hover{ background: rgba(255,255,255,.18); }
+    .floatbar-btn:hover{ background: rgba(255,255,255,.16); }
+
     .floatbar-close{
       width: 34px;height: 34px;border-radius: 12px;
       border: 1px solid rgba(255,255,255,.22);
@@ -229,6 +282,9 @@
     }
     .qr-pop .qr-tip{margin-top: 10px;font-size: 12px;opacity: .8;}
 
+    @media (max-width: 860px){
+      .brokerline{display:none;}
+    }
     @media (max-width: 520px){
       .floatbar-title{ font-size: 14px; }
       .floatbar-sub{ display:none; }
@@ -241,13 +297,13 @@
   <!-- Global nav -->
   <div class="site-nav">
     <div class="site-nav-wrap">
-      <div class="site-brand">Boston Rent Discounts</div>
+      <div class="site-brand"><span class="brand-dot"></span> Boston Rent Discounts</div>
       <div class="site-links">
         <a href="/boston-rent-discounts/">Home</a>
         <a href="/boston-rent-discounts/discounts/">Deals</a>
         <a href="/boston-rent-discounts/contact/">Contact</a>
       </div>
-      <div style="font-size:12px;opacity:.75;white-space:nowrap;">
+      <div class="brokerline">
         MA Licensed Real Estate <b>Salesperson</b> · Brokerage: <b>[你的Brokerage全名或备案 d/b/a]</b>
       </div>
     </div>
@@ -256,7 +312,7 @@
   <!-- Deals header -->
   <header>
     <div class="wrap">
-      <h1>Boston Apartment Discounts（按折后月租比较）</h1>
+      <h1>Special Deals（按折后月租比较）</h1>
       <div class="sub">Effective Rent = (标价×租期 − 优惠折算金额) ÷ 租期。信息仅供参考，优惠以物业/房源方最终确认为准。</div>
 
       <div class="controls">
@@ -409,11 +465,11 @@
       `;
     }
 
-    // Fixed neighborhood list (edit as you like)
+    // Areas you want
     const NEIGHBORHOODS = [
       "Cambridge","Somerville","Brookline","Newton","Quincy","Medford",
       "Malden","Everett","Chelsea","Revere","Watertown","Waltham",
-      "Allston","Seaport" // optional: keep your demo visible
+      "Allston","Seaport" // keep demo visible (optional)
     ];
 
     function populateNeighborhoods(){
@@ -434,7 +490,6 @@
 
     function ensureMap(){
       if (map) return;
-
       map = L.map('map', { scrollWheelZoom: true }).setView([42.3601, -71.0589], 11);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -518,17 +573,15 @@
       document.getElementById('metaLeft').textContent =
         `${deals.length} deals · 数据来自 deals.json`;
 
-      // grid
       document.getElementById('grid').innerHTML = deals.map(card).join("");
 
-      // map (only if visible)
       if (document.getElementById('mapWrap').style.display !== "none") {
         renderMap(deals);
       }
     }
 
     async function init(){
-      // Stable absolute path
+      // Stable absolute path (prevents directory-path bugs)
       const res = await fetch('/boston-rent-discounts/deals.json', { cache: "no-store" });
       allDeals = await res.json();
 
