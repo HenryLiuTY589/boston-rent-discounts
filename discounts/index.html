@@ -477,6 +477,31 @@ function populateNeighborhoods() {
     const res = await fetch('../deals.json', {cache:"no-store"});
     allDeals = await res.json();
     populateNeighborhoods();
+    const btnGrid = document.getElementById('btnGrid');
+const btnMap = document.getElementById('btnMap');
+const mapWrap = document.getElementById('mapWrap');
+const gridEl = document.getElementById('grid');
+
+btnGrid.addEventListener('click', () => {
+  gridEl.style.display = "";
+  mapWrap.style.display = "none";
+  btnGrid.className = "pill";
+  btnMap.className = "btn2";
+});
+
+btnMap.addEventListener('click', () => {
+  gridEl.style.display = "none";
+  mapWrap.style.display = "";
+  btnGrid.className = "btn2";
+  btnMap.className = "pill";
+
+  // 让 Leaflet 在容器显示后正确计算尺寸
+  setTimeout(() => {
+    ensureMap();
+    map.invalidateSize();
+    renderMap(allDeals);
+  }, 50);
+});
 
     ["q","neighborhood","beds","verified","sort"].forEach(id=>{
       document.getElementById(id).addEventListener('input', apply);
