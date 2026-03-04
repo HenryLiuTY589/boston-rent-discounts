@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Boston Rent Discounts | Effective Rent</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root{
   --bg:#ffffff;
@@ -276,11 +278,20 @@
 </header>
 
 <main>
-  <div class="meta">
-    <div id="metaLeft" class="left muted"></div>
-    <a class="pill" href="mailto:your@email.com">Submit a deal</a>
+<div class="meta">
+  <div id="metaLeft" class="left muted"></div>
+
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <button id="btnGrid" class="pill" type="button">Grid</button>
+    <button id="btnMap" class="btn2" type="button">Map</button>
+    <a class="btn2" href="/boston-rent-discounts/contact/">Contact</a>
   </div>
-  <div id="grid" class="grid"></div>
+</div>
+
+<div id="grid" class="grid"></div>
+<div id="mapWrap" style="display:none; margin-top:12px;">
+  <div id="map" style="height: 70vh; min-height: 520px; border:1px solid var(--line); border-radius:18px;"></div>
+</div>
 </main>
   <footer class="site-footer">
   <div class="footer-wrap">
