@@ -468,6 +468,9 @@ function populateNeighborhoods() {
       `${deals.length} deals · 数据来自 deals.json（建议每条都附 sourceUrl）`;
 
     document.getElementById('grid').innerHTML = deals.map(card).join("");
+    if (document.getElementById('mapWrap').style.display !== "none") {
+  renderMap(deals);
+}
   }
 
   async function init(){
@@ -482,7 +485,52 @@ function populateNeighborhoods() {
 
     apply();
   }
+let map, markersLayer;
 
+function ensureMap() {
+  if (map) return;
+
+  // 默认视角：大波士顿（你也可以调）
+  map = L.map('map', { scrollWheelZoom: true }).setView([42.3601, -71.0589], 11);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  markersLayer = L.layerGroup().addTo(map);
+}
+
+function renderMap(deals) {
+  ensureMap();
+  markersLayer.clearLayers();
+
+  const points = [];
+
+  deals.forEach(d => {
+    if (typeof d.lat !== "number" || typeof d.lng !== "number") return;
+
+    const eff = effectiveRent(d);
+    const label = eff ? `$${Math.round(eff).toLocaleString()}` : "—";
+
+    const m = L.marker([d.lat, d.lng]).addTo(markersLayer);
+    m.bindPopup(`
+      <div style="min-width:220px">
+        <div style="font-weight:900;font-size:14px">${d.property}</div>
+        <div style="opacity:.75;font-size:12px;margin-top:4px">${d.neighborhood || ""} · ${bedsText(d.beds)}</div>
+        <div style="margin-top:8px;font-weight:900">Effective: ${label}</div>
+        <div style="opacity:.75;font-size:12px">Base: ${fmt(d.baseRent)} · ${d.leaseMonths} mo</div>
+      </div>
+    `);
+
+    points.push([d.lat, d.lng]);
+  });
+
+  if (points.length) {
+    const bounds = L.latLngBounds(points);
+    map.fitBounds(bounds.pad(0.15));
+  }
+}
   init().catch(e=>{
     document.getElementById('metaLeft').textContent = "Failed to load deals.json";
     console.error(e);
