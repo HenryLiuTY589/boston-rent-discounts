@@ -65,6 +65,123 @@
   transform: translateY(-1px);
   box-shadow: 0 14px 30px rgba(180,130,10,.28);
 }
+    /* Floating WeChat bar */
+.floatbar{
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  width: min(980px, calc(100% - 24px));
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 40%, #4f46e5 100%);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(17,24,39,.25);
+  padding: 14px 14px;
+  z-index: 9999;
+}
+.floatbar-inner{
+  display:flex;
+  gap: 14px;
+  align-items:center;
+}
+.floatbar-left{
+  display:flex;
+  gap: 12px;
+  align-items:center;
+  flex: 1;
+  min-width: 0;
+}
+.floatbar-title{
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1.1;
+  margin: 0;
+}
+.floatbar-sub{
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: .9;
+}
+.floatbar-actions{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  flex-wrap: wrap;
+}
+.floatbar-btn{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  user-select:none;
+}
+.floatbar-btn:hover{ background: rgba(255,255,255,.18); }
+.floatbar-close{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.12);
+  color:#fff;
+  cursor:pointer;
+}
+.floatbar-close:hover{ background: rgba(0,0,0,.18); }
+
+.qr-pop{
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+  width: min(380px, calc(100% - 24px));
+  background: #fff;
+  color: #111827;
+  border: 1px solid rgba(17,24,39,.12);
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(17,24,39,.18);
+  padding: 14px;
+  z-index: 9999;
+  display:none;
+}
+.qr-pop.show{ display:block; }
+.qr-pop .qr-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.qr-pop .qr-title{ font-weight: 900; }
+.qr-pop .qr-x{
+  border: 1px solid rgba(17,24,39,.14);
+  background: #f3f4f6;
+  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  cursor:pointer;
+}
+.qr-pop img{
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(17,24,39,.10);
+}
+.qr-pop .qr-tip{
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: .8;
+}
+
+@media (max-width: 520px){
+  .floatbar-title{ font-size: 14px; }
+  .floatbar-sub{ display:none; }
+}
   </style>
 </head>
 <body>
@@ -104,7 +221,33 @@
   </div>
   <div id="grid" class="grid"></div>
 </main>
+<!-- Floating bar -->
+<div id="floatbar" class="floatbar" role="dialog" aria-label="Contact bar">
+  <div class="floatbar-inner">
+    <div class="floatbar-left">
+      <div>
+        <div class="floatbar-title">找房优惠咨询｜加我微信</div>
+        <div class="floatbar-sub">我可以帮你核对优惠、计算折后价、确认入住/租期限制</div>
+      </div>
+    </div>
 
+    <div class="floatbar-actions">
+      <button class="floatbar-btn" id="btnWeChat" type="button">WeChat 二维码</button>
+      <a class="floatbar-btn" href="mailto:your@email.com">Email</a>
+      <button class="floatbar-close" id="btnCloseBar" type="button" aria-label="Close">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR popup -->
+<div id="qrPop" class="qr-pop" role="dialog" aria-label="WeChat QR">
+  <div class="qr-head">
+    <div class="qr-title">扫码加微信</div>
+    <button class="qr-x" id="btnCloseQr" type="button" aria-label="Close">✕</button>
+  </div>
+  <img src="./wechat-qr.png" alt="WeChat QR Code">
+  <div class="qr-tip">打开微信 → 扫一扫 → 添加好友</div>
+</div>
 <script>
   const fmt = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
 
@@ -262,6 +405,45 @@ function populateNeighborhoods() {
     document.getElementById('metaLeft').textContent = "Failed to load deals.json";
     console.error(e);
   });
+  // Floating bar logic
+(function(){
+  const bar = document.getElementById('floatbar');
+  const qr = document.getElementById('qrPop');
+  const btnWeChat = document.getElementById('btnWeChat');
+  const btnCloseBar = document.getElementById('btnCloseBar');
+  const btnCloseQr = document.getElementById('btnCloseQr');
+
+  // If user closed before, keep hidden for 7 days
+  const KEY = "floatbar_closed_until";
+  const now = Date.now();
+  const until = Number(localStorage.getItem(KEY) || 0);
+  if (until && now < until) {
+    bar && (bar.style.display = "none");
+  }
+
+  btnWeChat?.addEventListener('click', () => {
+    qr?.classList.toggle('show');
+  });
+
+  btnCloseQr?.addEventListener('click', () => {
+    qr?.classList.remove('show');
+  });
+
+  btnCloseBar?.addEventListener('click', () => {
+    // hide bar + qr, remember for 7 days
+    if(bar) bar.style.display = "none";
+    qr?.classList.remove('show');
+    localStorage.setItem(KEY, String(Date.now() + 7*24*60*60*1000));
+  });
+
+  // click outside QR to close
+  document.addEventListener('click', (e) => {
+    if (!qr?.classList.contains('show')) return;
+    const t = e.target;
+    if (qr.contains(t) || btnWeChat.contains(t)) return;
+    qr.classList.remove('show');
+  });
+})();
 </script>
 </body>
 </html>
