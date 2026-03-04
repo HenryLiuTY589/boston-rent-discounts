@@ -1,0 +1,26 @@
+[
+  {
+    "id": "demo-1",
+    "property": "Demo Property 1",
+    "neighborhood": "Seaport",
+    "city": "Boston",
+    "beds": 1,
+    "baths": 1,
+    "baseRent": 4100,
+    "leaseMonths": 12,
+    "concession": { "type": "MONTHS_FREE", "value": 1 },
+    "sourceUrl": "https://www.livins.ai/discounts"
+  },
+  {
+    "id": "demo-2",
+    "property": "Demo Property 2",
+    "neighborhood": "Allston",
+    "city": "Boston",
+    "beds": 0,
+    "baths": 1,
+    "baseRent": 2850,
+    "leaseMonths": 12,
+    "concession": { "type": "AMOUNT_OFF", "value": 1500 },
+    "sourceUrl": "https://www.livins.ai/discounts"
+  }
+]
