@@ -389,7 +389,7 @@ function populateNeighborhoods() {
   }
 
   async function init(){
-    const res = await fetch('./deals.json', {cache:"no-store"});
+    const res = await fetch('../deals.json', {cache:"no-store"});
     allDeals = await res.json();
     populateNeighborhoods();
 
