@@ -175,16 +175,31 @@
   }
 
   let allDeals = [];
+const NEIGHBORHOODS = [
+  "Cambridge",
+  "Somerville",
+  "Brookline",
+  "Newton",
+  "Quincy",
+  "Medford",
+  "Malden",
+  "Everett",
+  "Chelsea",
+  "Revere",
+  "Watertown",
+  "Waltham"
+];
+function populateNeighborhoods() {
+  const sel = document.getElementById('neighborhood');
+  sel.innerHTML = '<option value="">全部区域</option>';
 
-  function populateNeighborhoods(deals){
-    const sel = document.getElementById('neighborhood');
-    const set = new Set(deals.map(d=>d.neighborhood).filter(Boolean));
-    [...set].sort().forEach(n=>{
-      const o=document.createElement('option');
-      o.value=n; o.textContent=n;
-      sel.appendChild(o);
-    });
-  }
+  NEIGHBORHOODS.forEach(n => {
+    const o = document.createElement('option');
+    o.value = n;
+    o.textContent = n;
+    sel.appendChild(o);
+  });
+}
 
   function apply(){
     const q = document.getElementById('q').value.trim().toLowerCase();
@@ -233,7 +248,7 @@
   async function init(){
     const res = await fetch('./deals.json', {cache:"no-store"});
     allDeals = await res.json();
-    populateNeighborhoods(allDeals);
+    populateNeighborhoods();
 
     ["q","neighborhood","beds","verified","sort"].forEach(id=>{
       document.getElementById(id).addEventListener('input', apply);
