@@ -7,269 +7,259 @@
 
   <style>
     :root{
-      /* Your palette */
-      --ink:#364649;        /* dark teal-gray */
-      --brand:#708F96;      /* muted teal */
-      --accent:#AA895F;     /* brass */
-      --cream:#E0D8CC;      /* warm light */
+      /* Behance-inspired palette to match Deals page */
+      --ink:#232327;
+      --brand:#002F24;
+      --brand-2:#0E0E0F;
+      --accent:#D3ED8C;
+      --accent-2:#AAD9CA;
+      --cream:#FEFEFE;
 
-      /* tokens */
-      --bg:var(--cream);
-      --panel:#ffffff;
-      --panel2:#F7F3EE;
-
+      --bg:#F4F5F8;
+      --panel:#FEFEFE;
+      --panel-soft:#F8F9FB;
+      --panel-tint:rgba(170,217,202,.18);
       --text:var(--ink);
-      --muted:rgba(54,70,73,.68);
-
-      --line:rgba(54,70,73,.14);
-      --line2:rgba(54,70,73,.22);
-
-      --shadow: 0 12px 30px rgba(54,70,73,.10);
+      --muted:rgba(35,35,39,.70);
+      --line:rgba(77,77,85,.14);
+      --line-strong:rgba(77,77,85,.22);
+      --shadow:0 14px 36px rgba(35,35,39,.10);
+      --shadow-soft:0 10px 24px rgba(35,35,39,.08);
+      --good:#0F5A49;
     }
 
     *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
     body{
-      margin:0;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:var(--bg);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(170,217,202,.16), transparent 28%),
+        linear-gradient(180deg, #FBFCFD 0%, var(--bg) 100%);
     }
+    a{text-decoration:none;color:inherit}
+    button{font:inherit}
 
-    /* Top nav */
+    .container{max-width:1180px;margin:0 auto;padding:0 20px}
+
+    /* ===== Top nav ===== */
     .site-nav{
-      position: sticky;
-      top: 0;
-      z-index: 2000;
-      background: rgba(224,216,204,.78);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
+      position:sticky;
+      top:0;
+      z-index:2000;
+      backdrop-filter:blur(14px);
+      background:rgba(244,245,248,.82);
+      border-bottom:1px solid var(--line);
     }
     .site-nav-wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 12px 20px;
+      min-height:68px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap: 12px;
+      gap:18px;
+      padding:12px 0;
     }
-    .left-nav{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
-      min-width: 0;
-    }
+    .left-nav{display:flex;align-items:center;gap:18px;min-width:0;flex-wrap:wrap}
     .brand{
       display:flex;
       align-items:center;
       gap:10px;
-      font-weight: 950;
-      letter-spacing: -.2px;
+      font-weight:950;
+      letter-spacing:-.02em;
       white-space:nowrap;
     }
     .brand-dot{
-      width:10px;height:10px;border-radius:50%;
-      background: var(--accent);
-      box-shadow: 0 6px 14px rgba(170,137,95,.35);
-      display:inline-block;
+      width:12px;height:12px;border-radius:999px;background:var(--accent);
+      box-shadow:0 8px 18px rgba(211,237,140,.26);
+      flex:0 0 auto;
     }
-    .nav a, .nav button{
+    .nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .nav a,.nav button{
       color:var(--text);
       text-decoration:none;
-      font-weight: 850;
-      opacity:.9;
-      padding:6px 10px;
-      border-radius:10px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font: inherit;
+      font-weight:850;
+      opacity:.92;
+      padding:9px 12px;
+      border-radius:12px;
+      border:none;
+      background:transparent;
+      cursor:pointer;
+      font:inherit;
     }
-    .nav a:hover, .nav button:hover{
-      opacity:1;
-      background: rgba(255,255,255,.45);
-    }
-    .nav .active{
-      background: rgba(255,255,255,.65);
-      border: 1px solid var(--line2);
-    }
+    .nav a:hover,.nav button:hover{opacity:1;background:rgba(255,255,255,.72)}
+    .nav .active{background:#fff;border:1px solid var(--line-strong);box-shadow:var(--shadow-soft)}
+    .brokerline{font-size:12px;color:var(--muted);white-space:nowrap;text-align:right}
+    .brokerline b{color:var(--text)}
 
-    .brokerline{
+    /* ===== Hero ===== */
+    main{padding:28px 0 0}
+    .hero-wrap{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);
+      gap:18px;
+      align-items:stretch;
+    }
+    .hero-main,
+    .hero-side,
+    .feature-card,
+    .footer-card{
+      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,249,251,.94));
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:var(--shadow-soft);
+    }
+    .hero-main{padding:24px}
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:var(--panel-tint);
+      border:1px solid rgba(15,90,73,.12);
+      font-weight:800;
       font-size:12px;
-      opacity:.8;
-      white-space:nowrap;
+      color:var(--brand);
+      width:max-content;
     }
-
-    /* Layout */
-    main{max-width:1100px;margin:0 auto;padding:34px 20px}
-    .hero{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;align-items:start}
-    @media(max-width:900px){.hero{grid-template-columns:1fr}}
-
     .h1{
-      font-size:36px;
-      line-height:1.12;
-      margin:0;
-      font-weight: 950;
-      letter-spacing:-.3px;
+      font-size:44px;
+      line-height:1.04;
+      margin:14px 0 0;
+      font-weight:950;
+      letter-spacing:-.04em;
     }
     .sub{
-      margin-top:12px;
+      margin-top:14px;
       color:var(--muted);
       font-size:15px;
-      line-height:1.65;
+      line-height:1.72;
+      max-width:760px;
     }
-    .cta{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-
+    .sub b{color:var(--text)}
+    .cta{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .btn,.btn2{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-height:48px;padding:0 18px;border-radius:14px;font-weight:900;
+      cursor:pointer;transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
     .btn{
-      display:inline-flex;align-items:center;justify-content:center;
-      padding:12px 16px;border-radius:14px;font-weight:950;
-      border:1px solid rgba(54,70,73,.16);
+      border:none;
       color:#fff;
-      text-decoration:none;
-      cursor:pointer;
-      background: var(--brand);
-      box-shadow: 0 14px 28px rgba(54,70,73,.16);
+      background:linear-gradient(135deg, #0F5A49, #002F24);
+      box-shadow:0 16px 32px rgba(0,47,36,.16);
     }
-    .btn:hover{transform:translateY(-1px); background:#5F7E85;}
-
+    .btn:hover{transform:translateY(-1px)}
     .btn2{
-      display:inline-flex;align-items:center;justify-content:center;
-      padding:12px 16px;border-radius:14px;font-weight:950;
-      background: rgba(255,255,255,.65);
-      border:1px solid var(--line2);
+      background:#fff;
+      border:1px solid var(--line);
       color:var(--text);
-      text-decoration:none;
-      cursor:pointer;
-      box-shadow: 0 10px 22px rgba(54,70,73,.08);
+      box-shadow:var(--shadow-soft);
     }
     .btn2:hover{transform:translateY(-1px)}
 
-    .cards{margin-top:26px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media(max-width:900px){.cards{grid-template-columns:1fr}}
-
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-      box-shadow: var(--shadow);
+    .hero-side{padding:18px}
+    .side-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .side-title{font-weight:950;font-size:18px;letter-spacing:-.02em}
+    .side-badge{
+      padding:7px 10px;border-radius:999px;background:rgba(170,217,202,.18);
+      border:1px solid rgba(15,90,73,.12);font-size:12px;font-weight:900;color:var(--brand);
     }
-    .card h3{margin:0 0 8px;font-size:14px;font-weight:950}
-    .card p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
-
-    .statbox{
-      background: rgba(255,255,255,.65);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-      box-shadow: 0 12px 30px rgba(54,70,73,.08);
-    }
-    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+    .side-copy{margin-top:10px;color:var(--muted);font-size:13px;line-height:1.65}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
     .stat{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
+      background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;
+      box-shadow:0 8px 18px rgba(35,35,39,.05);
     }
-    .stat .num{font-size:18px;font-weight:950}
-    .stat .lab{font-size:12px;color:var(--muted)}
-
-    footer{
-      max-width:1100px;
-      margin:0 auto;
-      padding:18px 20px 28px;
-      color:var(--muted);
-      font-size:12px;
-      border-top: 1px solid var(--line);
+    .stat .num{font-size:22px;font-weight:950;color:var(--brand);letter-spacing:-.03em}
+    .stat .lab{margin-top:6px;font-size:12px;color:var(--muted);line-height:1.45}
+    .side-note{
+      margin-top:14px;padding:12px 14px;border-radius:16px;background:rgba(170,217,202,.12);
+      border:1px solid rgba(170,217,202,.45);font-size:12px;color:var(--muted);line-height:1.6;
     }
 
-    /* Contact modal */
+    /* ===== Feature cards ===== */
+    .features{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .feature-card{padding:18px}
+    .feature-icon{
+      width:42px;height:42px;border-radius:14px;display:grid;place-items:center;
+      background:rgba(170,217,202,.18);border:1px solid rgba(15,90,73,.12);
+      color:var(--brand);font-weight:900;margin-bottom:14px;
+    }
+    .feature-card h3{margin:0 0 8px;font-size:16px;font-weight:950;letter-spacing:-.02em}
+    .feature-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+
+    /* ===== Footer ===== */
+    footer{padding:18px 0 28px}
+    .footer-card{padding:18px}
+    .footer-title{font-weight:950;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .footer-text{margin-top:8px;font-size:13px;line-height:1.65;color:var(--muted)}
+    .footer-text b{color:var(--text)}
+
+    /* ===== Contact modal ===== */
     .modal-backdrop{
-      position: fixed;
-      inset: 0;
-      background: rgba(54,70,73,.35);
-      backdrop-filter: blur(2px);
+      position:fixed;
+      inset:0;
+      background:rgba(14,14,15,.34);
+      backdrop-filter:blur(4px);
       display:none;
       align-items:center;
       justify-content:center;
-      z-index: 9999;
-      padding: 18px;
+      z-index:9999;
+      padding:18px;
     }
-    .modal-backdrop.show{display:flex;}
+    .modal-backdrop.show{display:flex}
     .modal{
-      width: min(860px, 100%);
-      background: rgba(255,255,255,.92);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: 0 22px 60px rgba(54,70,73,.24);
-      overflow: hidden;
+      width:min(920px,100%);
+      background:rgba(255,255,255,.98);
+      border:1px solid var(--line);
+      border-radius:26px;
+      box-shadow:0 28px 70px rgba(35,35,39,.22);
+      overflow:hidden;
     }
     .modal-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(247,243,238,.9);
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:16px 18px;border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(248,249,251,.98), rgba(244,245,248,.94));
     }
-    .modal-title{
-      font-weight: 950;
-      letter-spacing: -.2px;
-    }
+    .modal-title{font-size:20px;font-weight:950;letter-spacing:-.03em}
     .modal-x{
-      width: 36px; height: 36px;
-      border-radius: 12px;
-      border: 1px solid var(--line2);
-      background: rgba(255,255,255,.6);
-      cursor:pointer;
-      font-weight: 900;
-      color: var(--text);
+      width:40px;height:40px;border-radius:14px;border:1px solid var(--line);
+      background:#fff;cursor:pointer;font-weight:900;color:var(--text);
     }
-    .modal-body{
-      padding: 16px;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    @media(max-width:820px){ .modal-body{grid-template-columns:1fr;} }
-
+    .modal-body{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .qr-card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
-      box-shadow: 0 12px 30px rgba(54,70,73,.10);
+      background:linear-gradient(180deg, #fff, var(--panel-soft));
+      border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:var(--shadow-soft);
     }
-    .qr-card .qname{
-      font-weight: 950;
-      margin-bottom: 10px;
-    }
+    .qname{font-weight:950;font-size:18px;margin-bottom:12px}
     .qr-card img{
-      width: 100%;
-      height: auto;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: var(--panel2);
+      width:100%;height:auto;border-radius:18px;border:1px solid var(--line);
+      background:#fff;padding:14px;
     }
-    .qr-tip{
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    .qr-tip{margin-top:12px;font-size:13px;color:var(--muted);line-height:1.55}
 
-    /* Hide brokerline on small */
+    @media (max-width: 980px){
+      .hero-wrap{grid-template-columns:1fr}
+      .features{grid-template-columns:1fr}
+      .h1{font-size:36px}
+    }
     @media (max-width: 860px){
-      .brokerline{display:none;}
+      .brokerline{display:none}
+      .modal-body{grid-template-columns:1fr}
+    }
+    @media (max-width: 560px){
+      .container{padding:0 14px}
+      .h1{font-size:30px}
+      .stats{grid-template-columns:1fr 1fr}
+      .cta{align-items:stretch}
+      .btn,.btn2{width:100%}
     }
   </style>
 </head>
-
 <body>
-  <!-- Top Nav -->
   <div class="site-nav">
-    <div class="site-nav-wrap">
+    <div class="container site-nav-wrap">
       <div class="left-nav">
         <div class="brand"><span class="brand-dot"></span> Live in BOS</div>
         <div class="nav">
@@ -279,91 +269,107 @@
         </div>
       </div>
 
-      <!-- keep this line unchanged (content) -->
       <div class="brokerline">
-        MA Licensed Real Estate Professional · Brokerage: <b>[你的Brokerage全名或备案d/b/a]</b>
+        MA Licensed Real Estate Professional · Brokerage: <b>[你的Brokerage全名或备案 d/b/a]</b>
       </div>
     </div>
   </div>
 
   <main>
-    <section class="hero">
-      <div>
-        <h2 class="h1">大波士顿租房优惠<br/>一眼看懂折后月租</h2>
+    <div class="container">
+      <section class="hero-wrap">
+        <div class="hero-main">
+          <div class="eyebrow">Boston rental deals · Effective Rent First</div>
+          <h1 class="h1">大波士顿租房优惠，<br>先看折后月租再决定值不值得冲。</h1>
 
-        <div class="sub">
-          波士顿周边公寓的 “免租 / 折扣 / 返现” 规则很容易把人看花眼：同样写着 <b>1 month free</b>，
-          有的只限特定户型，有的要求特定入住日期，还有的租期不同折算差很多。<br/><br/>
-          <b>Live in BOS</b> 做的事很简单：把这些优惠统一换算成 <b>Effective Rent（折后月租）</b>，
-          让你能在同一个口径下横向比较，快速筛选出更适合的选择。
+          <div class="sub">
+            波士顿周边公寓的 <b>免租、折扣、返现</b> 很容易把人看花眼。表面上都写着优惠，
+            但实际会受到 <b>户型、入住日期、租期长度、资格限制</b> 的影响。<br><br>
+            <b>Live in BOS</b> 的核心不是堆房源，而是把这些优惠统一折算成
+            <b>Effective Rent（折后月租）</b>，让你用同一个口径横向比较，先筛出真正更划算的选择。
+          </div>
+
+          <div class="cta">
+            <a class="btn" href="/boston-rent-discounts/discounts/">查看优惠列表 →</a>
+            <a class="btn2" href="#how">我们怎么算折后价？</a>
+            <button class="btn2" type="button" id="btnContact2">扫码加微信</button>
+          </div>
         </div>
 
-        <div class="cta">
-          <a class="btn" href="/boston-rent-discounts/discounts/">查看优惠列表 →</a>
-          <a class="btn2" href="#how">我们怎么算折后价？</a>
-          <button class="btn2" type="button" id="btnContact2">扫码加微信</button>
-        </div>
+        <aside class="hero-side">
+          <div class="side-top">
+            <div class="side-title">站点概览</div>
+            <div class="side-badge">Static + Data-driven</div>
+          </div>
 
-        <div class="cards" id="how">
-          <div class="card">
-            <h3>统一口径：折后月租</h3>
-            <p>
-              Effective Rent = (标价 × 租期 − 优惠折算金额) ÷ 租期。把不同“免租/折扣”换成同一尺度，方便比较。
-            </p>
+          <div class="side-copy">
+            这些数字来自 <code>deals.json</code>。你后面只要更新数据表，这里就会自动反映最新房源覆盖和最低折后价。
           </div>
-          <div class="card">
-            <h3>更快筛选</h3>
-            <p>
-              按区域、户型、Verified 状态筛选；默认按折后月租排序，先把更划算的放在前面。
-            </p>
-          </div>
-          <div class="card">
-            <h3>咨询入口</h3>
-            <p>
-              Contact 弹框里提供两个微信二维码：一个加我本人，一个进入咨询/群/公众号入口（按你实际用途）。
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <aside class="statbox">
-        <div style="font-weight:950">站点概览</div>
-        <div class="sub" style="margin-top:6px">
-          统计来自 deals.json（静态站也能实时展示）
-        </div>
+          <div class="stats">
+            <div class="stat">
+              <div class="num" id="statDeals">—</div>
+              <div class="lab">Deals</div>
+            </div>
+            <div class="stat">
+              <div class="num" id="statVerified">—</div>
+              <div class="lab">Verified</div>
+            </div>
+            <div class="stat">
+              <div class="num" id="statMin">—</div>
+              <div class="lab">Lowest Effective Rent</div>
+            </div>
+            <div class="stat">
+              <div class="num" id="statAreas">—</div>
+              <div class="lab">Areas Covered</div>
+            </div>
+          </div>
 
-        <div class="stats">
-          <div class="stat">
-            <div class="num" id="statDeals">—</div>
-            <div class="lab">Deals</div>
+          <div class="side-note">
+            信息仅供参考。价格、优惠、资格限制与库存请以物业或房源方最终确认结果为准。
           </div>
-          <div class="stat">
-            <div class="num" id="statVerified">—</div>
-            <div class="lab">Verified</div>
-          </div>
-          <div class="stat">
-            <div class="num" id="statMin">—</div>
-            <div class="lab">Lowest Effective Rent</div>
-          </div>
-          <div class="stat">
-            <div class="num" id="statAreas">—</div>
-            <div class="lab">Areas covered</div>
-          </div>
+        </aside>
+      </section>
+
+      <section class="features" id="how">
+        <div class="feature-card">
+          <div class="feature-icon">Σ</div>
+          <h3>统一口径：折后月租</h3>
+          <p>
+            Effective Rent = (标价 × 租期 − 优惠折算金额) ÷ 租期。把不同免租和折扣先换成同一个尺度，再比较谁更划算。
+          </p>
         </div>
-      </aside>
-    </section>
+        <div class="feature-card">
+          <div class="feature-icon">⌂</div>
+          <h3>更快筛选真实机会</h3>
+          <p>
+            按区域、户型、Verified 状态和价格区间筛选，默认按折后月租排序，先看到更有可能值得联系的楼盘。
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✦</div>
+          <h3>咨询入口更直接</h3>
+          <p>
+            Contact 弹窗里放两个微信二维码：一个直连你本人，另一个可用于咨询群、公众号或备用账号入口。
+          </p>
+        </div>
+      </section>
+    </div>
   </main>
 
   <footer>
-    <div style="font-weight:950; margin-bottom:6px;">Disclosure / 披露</div>
-    <div>
-      MA Licensed Real Estate <b>Salesperson</b>：<b>[你的姓名]</b>（MA License # 可选）<br/>
-      Brokerage：<b>[Brokerage法定名称或备案 d/b/a]</b><br/>
-      本站信息仅供参考；价格与优惠以物业/房源方最终确认为准。
+    <div class="container">
+      <div class="footer-card">
+        <div class="footer-title">Disclosure / 披露</div>
+        <div class="footer-text">
+          MA Licensed Real Estate <b>Salesperson</b>：<b>[你的姓名]</b>（MA License # 可选）<br>
+          Brokerage：<b>[Brokerage法定名称或备案 d/b/a]</b><br>
+          本站信息仅供参考；价格与优惠以物业/房源方最终确认为准。
+        </div>
+      </div>
     </div>
   </footer>
 
-  <!-- Contact Modal -->
   <div id="contactModal" class="modal-backdrop" role="dialog" aria-label="Contact">
     <div class="modal">
       <div class="modal-head">
@@ -373,13 +379,13 @@
 
       <div class="modal-body">
         <div class="qr-card">
-          <div class="qname">wechat-qr.png</div>
+          <div class="qname">Primary WeChat</div>
           <img src="/boston-rent-discounts/wechat-qr.png" alt="wechat-qr.png">
           <div class="qr-tip">微信 → 扫一扫 → 添加好友</div>
         </div>
 
         <div class="qr-card">
-          <div class="qname">wechat-qr2.png</div>
+          <div class="qname">Backup / Group</div>
           <img src="/boston-rent-discounts/wechat-qr2.png" alt="wechat-qr2.png">
           <div class="qr-tip">可用于：咨询入口 / 群 / 公众号（按你实际用途填写）</div>
         </div>
@@ -391,40 +397,40 @@
     const fmt = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
 
     function concessionValue(d){
-      const c=d.concession, base=Number(d.baseRent||0);
+      const c = d.concession, base = Number(d.baseRent || 0);
       if(!c) return 0;
-      if(c.type==="MONTHS_FREE") return base*Number(c.value||0);
-      if(c.type==="AMOUNT_OFF") return Number(c.value||0);
-      if(c.type==="MONTHLY_OFF") return Number(c.value||0)*Number(c.months||0);
+      if(c.type === "MONTHS_FREE") return base * Number(c.value || 0);
+      if(c.type === "AMOUNT_OFF") return Number(c.value || 0);
+      if(c.type === "MONTHLY_OFF") return Number(c.value || 0) * Number(c.months || 0);
       return 0;
     }
+
     function effectiveRent(d){
-      const base=Number(d.baseRent||0), m=Number(d.leaseMonths||0);
-      if(!base||!m) return null;
-      return (base*m - concessionValue(d))/m;
+      const base = Number(d.baseRent || 0), m = Number(d.leaseMonths || 0);
+      if(!base || !m) return null;
+      return (base * m - concessionValue(d)) / m;
     }
 
     async function loadStats(){
       try{
-        const res = await fetch('/boston-rent-discounts/deals.json', {cache:"no-store"});
+        const res = await fetch('/boston-rent-discounts/deals.json', {cache:'no-store'});
         const deals = await res.json();
 
-        const effs = deals.map(effectiveRent).filter(v=>typeof v==="number" && isFinite(v));
+        const effs = deals.map(effectiveRent).filter(v => typeof v === 'number' && isFinite(v));
         const min = effs.length ? Math.min(...effs) : null;
-        const verified = deals.filter(d=>!!d.verifiedAt).length;
-        const areas = new Set(deals.map(d=>d.neighborhood).filter(Boolean)).size;
+        const verified = deals.filter(d => !!d.verified || !!d.verifiedAt).length;
+        const areas = new Set(deals.map(d => d.neighborhood).filter(Boolean)).size;
 
         document.getElementById('statDeals').textContent = deals.length;
         document.getElementById('statVerified').textContent = verified;
-        document.getElementById('statMin').textContent = min ? fmt(Math.round(min)) : "—";
+        document.getElementById('statMin').textContent = min ? fmt(Math.round(min)) : '—';
         document.getElementById('statAreas').textContent = areas;
       }catch(e){
-        // ignore
+        console.error(e);
       }
     }
     loadStats();
 
-    // Contact modal
     const modal = document.getElementById('contactModal');
     const open1 = document.getElementById('btnContact');
     const open2 = document.getElementById('btnContact2');
